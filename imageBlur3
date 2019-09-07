@@ -1,0 +1,63 @@
+class Image
+    attr_reader :pixels
+    def initialize(pixels)
+        @pixels = pixels
+    end
+
+    def identify_ones
+    ones_coordinates = []
+        @pixels.each_with_index { |row, row_number|
+            row.each_with_index do |item, col_number|
+                if item == 1
+                    ones_coordinates << [row_number, col_number]
+                end
+            end
+    }
+        ones_coordinates
+    end
+    
+    def blur(n)
+        ones = identify_ones
+        @pixels.each_with_index do |row, row_number|
+            row.each_with_index do |item, col_number|
+                ones.each do |ones_row_number, ones_col_number|
+                    if distance(col_number, row_number, ones_row_number, ones_col_number) <= n
+                        @pixels[row_number][col_number] = 1
+                    end
+                end
+            end
+        end
+    end
+
+    def distance(x, y, x1, y1)
+        x_distance = (x1 - x)
+        y_distance = (y1 - y)
+        if x_distance < 0
+            x_distance = x_distance * -1
+        end
+        if y_distance < 0
+            y_distance = y_distance * -1
+        end
+        x_distance + y_distance
+    end
+
+    def output_image
+        pixels.each do |pixel|
+            puts pixel.join
+        end
+    end
+end
+
+
+
+#this should work
+image = Image.new([
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0],
+])
+image.blur(3)
+image.output_image
